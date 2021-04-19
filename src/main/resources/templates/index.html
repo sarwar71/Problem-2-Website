@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+          integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css"
+          integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
+
+    <title>e-Commerce</title>
+
+    <style>
+      .crop-text-2 {
+      -webkit-line-clamp: 2;
+      overflow : hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+    }
+    .card:hover{
+     transform: scale(1.05);
+  box-shadow: 0 10px 20px rgba(0,0,0,.12), 0 4px 8px rgba(0,0,0,.06);
+}
+    </style>
+
+</head>
+<body style="background: #F1F3F5">
+
+<nav class="navbar navbar-light bg-dark">
+    <div class="container">
+        <div class="col-md-10">
+            <form th:action="@{/}" class="d-flex" style="padding-left: 17px">
+                <input class="form-control me-3" type="search" placeholder="Search Product" aria-label="Search"
+                       name="keyword" id="keyword" th:value="${keyword}" required style="width:768px">
+                <button class="btn btn-outline-success ml-2" id="searchProduct" type="button">Search</button>
+            </form>
+        </div>
+        <div class="col-md-2">
+            <div class="col d-flex" style="padding-left: 90px">
+                <i class="fas fa-cart-plus mt-1 mr-1" style="color: yellow; font-size:24px;"></i>
+                <p id="count" style="color:yellow;">0</p>
+            </div>
+        </div>
+
+    </div>
+</nav>
+
+<div class="container" style="margin-top: 30px">
+    <div class="col">
+        <div class="row justify-content-center mb-2">
+            <p class="mt-1 mr-2">Sort By: </p>
+            <form id="sortForm" th:action="@{/}" class="d-flex">
+                <select id="sort" name="sort" class="control" aria-label="Default select example"
+                        style="border: 0px !important; height: 30px;">
+                    <option th:value="0">Default</option>
+                    <option th:value="1">Price (Low>High)</option>
+                    <option th:value="2">Price(High>Low)</option>
+                </select>
+            </form>
+        </div>
+        <div class="row d-flex justify-content-center mb-5">
+            <div class="card " style="margin:10px; width: 16rem;" th:each="product : ${products}">
+                <div class="col">
+                    <div class="row-sm-4 d-flex justify-content-center">
+                        <a th:href="${product.productLink}" target="_blank">
+                            <img class="m-3" height="130px" width="200px" th:src="@{${product.imageLink}}">
+                        </a>
+                    </div>
+                    <div class="row-sm-8 d-flex">
+                        <div class="card-body">
+                            <h5 class="card-title crop-text-2" th:text="${product.productName}"></h5>
+                            <h3><span th:text="${product.price}"></span> BDT</h3>
+                        </div>
+                    </div>
+                    <button type="button" id="cart" class="btn btn-primary btn-lg btn-block mb-3"
+                            onclick="cartCount(1)">Add to Cart
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+
+<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+        integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+        integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+        crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+        integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+        crossorigin="anonymous"></script>
+
+<script>
+
+        var productCounter = 0;
+        function cartCount(count){
+            productCounter += count;
+            $('#count').html(productCounter);
+        }
+
+        $(document).ready( function() {
+            var selectSort = '[[${selectedSort}]]'
+            $("select#sort").val(selectSort != ""? selectSort: "0")
+
+            $("select#sort").on("change", function(){
+                searchProductsWithParams();
+            })
+
+            $('button#searchProduct').on('click', function(){
+                searchProductsWithParams();
+            })
+
+            function searchProductsWithParams(){
+                var keyword = $('input#keyword').val();
+                var sort = $('select#sort').val();
+
+                window.location.href="/?keyword="+keyword+"&sort="+sort
+            }
+        })
+
+</script>
+
+
+</html>
